@@ -84,11 +84,12 @@ def construct_path(state, meta):
                 action_list.append(action)
         else:
             break
-    print(action_list)
-    print(action_list.reverse())
+    #print(action_list)
+    #print(action_list.reverse())
     #L[::-1]
     #print(action_list[::-1])
     #return action_list.reverse()
+    action_list.reverse() 
     return action_list
 
 def tinyMazeSearch(problem):
@@ -113,12 +114,12 @@ def depthFirstSearch(problem):
     open_set.push(start)
 
     while not open_set.isEmpty():
-        print("Mpeike sto while\n")
+        #print("Mpeike sto while\n")
         parent_state = open_set.pop()
-        print("meta = "+str(meta))
+        #print("meta = "+str(meta))
         if problem.isGoalState(parent_state):
             mypath  = construct_path(parent_state, meta)
-            print("mypath = " + str(mypath)+"  parent state = "+str(parent_state))
+            #print("mypath = " + str(mypath)+"  parent state = "+str(parent_state))
             return mypath
         #adding the state of the node to the exploredset
         closed_set.add(parent_state)
@@ -127,7 +128,7 @@ def depthFirstSearch(problem):
             #print(child_state,action)
             # if child_state in closed_set:
             #     continue
-            print("mpeike sthn for")
+            #print("mpeike sthn for")
             if child_state not in open_set.list and child_state not in closed_set:
                 meta[child_state] = (parent_state, action)
                 open_set.push(child_state)
@@ -181,7 +182,7 @@ def breadthFirstSearch2(problem):
         leafNode = frontier.pop()
         if problem.isGoalState(leafNode.state):
             path = leafNode.getPath()
-            print("path = "+str(path) )
+            #print("path = "+str(path) )
             return path
         explored.append(leafNode.state)
         for successor in problem.getSuccessors(leafNode.state):
@@ -210,12 +211,12 @@ def breadthFirstSearch(problem):
     open_set.push(start)
 
     while not open_set.isEmpty():
-        print("Mpeike sto while\n")
+        #print("Mpeike sto while\n")
         parent_state = open_set.pop()
-        print("meta = "+str(meta))
+        #print("meta = "+str(meta))
         if problem.isGoalState(parent_state):
             mypath  = construct_path(parent_state, meta)
-            print("mypath = " + str(mypath)+"  parent state = "+str(parent_state))
+            #print("mypath = " + str(mypath)+"  parent state = "+str(parent_state))
             return mypath
         #adding the state of the node to the exploredset
         closed_set.add(parent_state)
@@ -224,7 +225,7 @@ def breadthFirstSearch(problem):
             #print(child_state,action)
             # if child_state in closed_set:
             #     continue
-            print("mpeike sthn for")
+            #print("mpeike sthn for")
             if child_state not in open_set.list and child_state not in closed_set:
                 meta[child_state] = (parent_state, action)
                 open_set.push(child_state)
