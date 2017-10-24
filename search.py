@@ -147,9 +147,11 @@ class Node:
         Path-Cost: Cost from initial state to this node
     """
     def __init__(self, successor, parent=None):
-        self.state = successor[0]
-        self.parent = parent
-        self.action = successor[1]
+        #successor(geitonas) =   ((34, 15), 'South', 1)
+        #print("Node :: successor = "+str(successor))
+        self.state = successor[0] #thesh 
+        self.parent = parent #poios einai o pateras 
+        self.action = successor[1]#pws phge apo ton patera ekei 
         if parent == None or parent.pathCost == None:
             self.pathCost = successor[2]
         else:
@@ -192,7 +194,7 @@ def breadthFirstSearch2(problem):
     print "No solution found"
     return []
 
-def breadthFirstSearch(problem):
+def breadthFirstSearch1(problem):
     """Search the shallowest nodes in the search tree first."""
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
@@ -235,6 +237,51 @@ def breadthFirstSearch(problem):
     print "No solution found"
     return []
     util.raiseNotDefined()
+
+
+def breadthFirstSearch(problem):
+   
+    frontier = util.Queue()
+    #Node(successor, parent,action)
+
+    print("yolose")
+    startNode = Node((problem.getStartState(), None, None))
+
+    #Check if start node is goal
+    if problem.isGoalState(startNode.state):
+        return []
+    #frontier.push(newNode)
+    #an o kombos den einai  o telikos tote vazw ta paidia sto queue
+    #successors(geitones) =   [((34, 15), 'South', 1), ((33, 16), 'West', 1)]
+    
+    frontier.push(startNode);
+
+    # for successors in problem.getSuccessors(problem.getStartState()):
+    #     newNode = Node(successors, startNode)
+    #     frontier.push(newNode)
+
+    explored = list()
+    explored.append(startNode.state)
+
+    while not frontier.isEmpty():
+        poped_Node = frontier.pop()#popping Node
+        explored.append(poped_Node.state)
+
+        # if problem.isGoalState(Node.state): #if is goal return path
+        #     path = leafNode.getPath()
+        #     #print("path = "+str(path) )
+        #     return path
+        for successor in problem.getSuccessors(poped_Node.state):
+            newNode = Node(successor, poped_Node)
+            
+            if newNode.state not in frontier.list and newNode.state not in explored:
+                #an o geitonas autos einai telikos goal tote epistrefoume to path toy 
+                if problem.isGoalState(newNode.state):
+                    return newNode.getPath()
+                frontier.push(newNode)
+    print "No solution found"
+    return []
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
