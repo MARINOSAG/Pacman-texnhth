@@ -152,10 +152,19 @@ class Node:
         self.state = successor[0] #thesh 
         self.parent = parent #poios einai o pateras 
         self.action = successor[1]#pws phge apo ton patera ekei 
+        #an o parent yparxei prosthetw to kostos
         if parent == None or parent.pathCost == None:
             self.pathCost = successor[2]
         else:
             self.pathCost = parent.pathCost + successor[2]
+    def expand(self,problem):
+        return [self.Node(successor, self)
+                for successor in problem.getSuccessors(self.state)]
+    def child_node(self, problem, action):
+        "[Figure 3.10]"
+        next = action[0]
+        return Node(next, self, action[1], self.path_cost+action[2])
+
 
     def getPath(self):
         path = list()
@@ -237,11 +246,19 @@ def breadthFirstSearch1(problem):
     print "No solution found"
     return []
     util.raiseNotDefined()
+# def expand(self, problem):
+# #"List the nodes reachable in one step from this node."
+#     return [self.child_node(problem, action)
+#                 for action in problem.getSuccessors(self.state)]
+
+# def child_node(self, problem, action):
+# #        "[Figure 3.10]"
+#     next = action[0]
+#     return Node(next, self, action[1], self.path_cost+action[2])
 
 
 def breadthFirstSearch(problem):
    
-    frontier = util.Queue()
     #Node(successor, parent,action)
 
     print("yolose")
@@ -253,31 +270,44 @@ def breadthFirstSearch(problem):
     #frontier.push(newNode)
     #an o kombos den einai  o telikos tote vazw ta paidia sto queue
     #successors(geitones) =   [((34, 15), 'South', 1), ((33, 16), 'West', 1)]
-    
+    frontier = util.Queue()
+
     frontier.push(startNode);
 
     # for successors in problem.getSuccessors(problem.getStartState()):
     #     newNode = Node(successors, startNode)
     #     frontier.push(newNode)
 
-    explored = list()
-    explored.append(startNode.state)
-
+    explored = set()
+    #explored.add(startNode.state)
+    expanded_list = []
     while not frontier.isEmpty():
         poped_Node = frontier.pop()#popping Node
-        explored.append(poped_Node.state)
+        print("poped_NODE = ",poped_Node.state)
+        #print("expanded list = ",expanded_list)
+        if(problem.isGoalState(poped_Node.state)):
+            return poped_Node.getPath()
+
+        explored.add(poped_Node.state)#adding Node to explored set
 
         # if problem.isGoalState(Node.state): #if is goal return path
         #     path = leafNode.getPath()
         #     #print("path = "+str(path) )
         #     return path
-        for successor in problem.getSuccessors(poped_Node.state):
+        #gia kathe geitona kanw
+        if(poped_Node.state in expanded_list):
+            print("o KOMBOS ",poped_Node.state  )
+            continue
+        expanded_list.append(poped_Node.state)
+        succesor_list =problem.getSuccessors(poped_Node.state)
+        print(succesor_list)
+        for successor in succesor_list:
             newNode = Node(successor, poped_Node)
             
-            if newNode.state not in frontier.list and newNode.state not in explored:
+            if ( (newNode.state not in frontier.list )and  (newNode.state not in explored)):
                 #an o geitonas autos einai telikos goal tote epistrefoume to path toy 
-                if problem.isGoalState(newNode.state):
-                    return newNode.getPath()
+                # if problem.isGoalState(newNode.state):
+                #     return newNode.getPath()
                 frontier.push(newNode)
     print "No solution found"
     return []
