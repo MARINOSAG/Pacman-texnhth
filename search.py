@@ -173,6 +173,11 @@ class Node:
             path.insert(0, currentNode.action)
             currentNode = currentNode.parent
         return path
+    def __eq__(self, other):
+        return isinstance(other, Node) and self.state == other.state
+
+    def __hash__(self):
+        return hash(self.state)
 def breadthFirstSearch2(problem):
  
     frontier = util.Queue()
@@ -257,7 +262,160 @@ def breadthFirstSearch1(problem):
 #     return Node(next, self, action[1], self.path_cost+action[2])
 
 
+class Nodei:
+
+    """A node in a search tree. Contains a pointer to the parent (the node
+    that this is a successor of) and to the actual state for this node. Note
+    that if a state is arrived at by two paths, then there are two nodes with
+    the same state.  Also includes the action that got us to this state, and
+    the total path_cost (also known as g) to reach the node.  Other functions
+    may add an f and h value; see best_first_graph_search and astar_search for
+    an explanation of how the f and h values are handled. You will not need to
+    subclass this class."""
+
+    def __init__(self, state, parent=None, action=None, path_cost=0):
+        "Create a search tree Node, derived from a parent by an action."
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.path_cost = path_cost
+        self.depth = 0
+        if parent:
+            self.depth = parent.depth + 1
+
+    def __repr__(self):
+        return "<Nodei %s>" % (self.state,)
+
+    def __lt__(self, node):
+        return self.state < node.state
+
+    def expand(self, problem):
+        "List the nodes reachable in one step from this node."
+        return [self.child_node(problem, action)
+                for action in problem.getSuccessors(self.state)]
+
+    def child_node(self, problem, action):
+        "[Figure 3.10]"
+        next = action[0]
+        print("action0 = ",next)
+        return Nodei(next, self, action[1], self.path_cost+action[2])
+
+    def solution(self):
+        "Return the sequence of actions to go from the root to this node."
+        return [node.action for node in self.path()[1:]]
+
+    def path(self):
+        "Return a list of nodes forming the path from the root to this node."
+        node, path_back = self, []
+        while node:
+            path_back.append(node)
+            node = node.parent
+        return list(reversed(path_back))
+
+    # We want for a queue of nodes in breadth_first_search or
+    # astar_search to have no duplicated states, so we treat nodes
+    # with the same state as equal. [Problem: this may not be what you
+    # want in other contexts.]
+
+    def __eq__(self, other):
+        return isinstance(other, Nodei) and self.state == other.state
+
+    def __hash__(self):
+        return hash(self.state)
+
+
+def breadthFirstSearchilias(problem):
+    print("liakou")
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+    node = Nodei(problem.getStartState())
+    if problem.isGoalState(problem.getStartState()): return node.solution()
+    frontier = util.Queue()
+    frontier.push(node)
+    explored = set()
+    while not frontier .isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node.state): return node.solution()
+        explored.add(node.state)
+        for child in node.expand(problem):
+            if (child.state not in explored) and (child not in frontier.list):
+                frontier.push(child)
+    return []
+
+
+
 def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+    node = Node((problem.getStartState(), None, None))
+    if problem.isGoalState(problem.getStartState()): return node.getPath()
+    frontier = util.Queue()
+    frontier.push(node)
+    explored = set()
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node.state): return node.getPath()
+        #if(node.state  in explored): continue
+        explored.add(node.state)
+        #print("frontier (queue )  == ",frontier.list)
+        succesor_list =problem.getSuccessors(node.state)
+
+        for successor in succesor_list:
+            child = Node(successor, node)
+            print("child.state = ",child.state)
+            flag =0#mas deixnei an to child yparxei hdh sthn oura
+
+            for x in frontier.list :
+                print(x.state)
+                if child.state == x.state :
+                    flag =1
+                    
+            if ( (child.state not in explored) and (flag ==0) ): #and (child not in frontier.list):
+                frontier.push(child)
+    return []
+def breadthFirstSearchdikia(problem):
+   
+  
+    print("yolose")
+    startNode = Node((problem.getStartState(), None, None))
+
+    #Check if start node is goal
+    if problem.isGoalState(startNode.state):
+        return []
+    frontier = util.Queue()
+
+    frontier.push(startNode);
+
+    
+
+    explored =set()
+    expanded_list = []
+    ####loooooop
+    while not frontier.isEmpty():
+        poped_Node = frontier.pop()#popping Node
+        if(problem.isGoalState(poped_Node.state)):  return poped_Node.getPath()
+
+        explored.add(poped_Node.state)#adding Node to explored set
+
+        # if(poped_Node.state in expanded_list):
+        #     #print("o KOMBOS ",poped_Node.state  )
+        #     if(poped_Node.state in explored): 
+        #         print("to if me to set den doulepseeeeeeeeee")
+        #     continue
+        expanded_list.append(poped_Node.state)
+        succesor_list =problem.getSuccessors(poped_Node.state)
+        #print(succesor_list)
+        for successor in succesor_list:
+            newNode = Node(successor, poped_Node)
+            
+            if(newNode.state not in frontier.list ):
+                if(newNode.state not in explored):
+                    if(newNode.state not in expanded_list):
+                        frontier.push(newNode)
+    print "No solution found"
+    return []
+
+def breadthFirstSearch10(problem):
    
     #Node(successor, parent,action)
 
@@ -278,36 +436,42 @@ def breadthFirstSearch(problem):
     #     newNode = Node(successors, startNode)
     #     frontier.push(newNode)
 
-    explored = set()
+    explored =list() #set()
     #explored.add(startNode.state)
     expanded_list = []
     while not frontier.isEmpty():
         poped_Node = frontier.pop()#popping Node
-        print("poped_NODE = ",poped_Node.state)
+       # print("poped_NODE = ",poped_Node.state)
         #print("expanded list = ",expanded_list)
         if(problem.isGoalState(poped_Node.state)):
             return poped_Node.getPath()
 
-        explored.add(poped_Node.state)#adding Node to explored set
+        explored.append(poped_Node.state)#adding Node to explored set
 
         # if problem.isGoalState(Node.state): #if is goal return path
         #     path = leafNode.getPath()
         #     #print("path = "+str(path) )
         #     return path
         #gia kathe geitona kanw
-        if(poped_Node.state in expanded_list):
-            print("o KOMBOS ",poped_Node.state  )
-            continue
+        # if(poped_Node.state in expanded_list):
+        #     #print("o KOMBOS ",poped_Node.state  )
+        #     if(poped_Node.state in explored): 
+        #         print("to if me to set den doulepseeeeeeeeee")
+        #     continue
         expanded_list.append(poped_Node.state)
         succesor_list =problem.getSuccessors(poped_Node.state)
-        print(succesor_list)
+        #print(succesor_list)
         for successor in succesor_list:
             newNode = Node(successor, poped_Node)
-            
-            if ( (newNode.state not in frontier.list )and  (newNode.state not in explored)):
+            for i in range(len(frontier.list)):
+                if(newNode.state == frontier.list[i].state):continue
+
+
+            if ( (newNode not in frontier.list )and  (newNode.state not in explored)):
                 #an o geitonas autos einai telikos goal tote epistrefoume to path toy 
                 # if problem.isGoalState(newNode.state):
                 #     return newNode.getPath()
+                #if()
                 frontier.push(newNode)
     print "No solution found"
     return []
