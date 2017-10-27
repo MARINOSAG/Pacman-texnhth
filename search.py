@@ -189,14 +189,15 @@ def breadthFirstSearch(problem):
                 frontier.push(child)
     return []
 
-
+#na thn tsekarw pali gt den trexei o autograder
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     node = Node((problem.getStartState(), None, None))
     if problem.isGoalState(problem.getStartState()): return node.getPath()
     frontier = util.PriorityQueue()
-    frontier.update(node,node.pathCost)
+    #frontier.update(node,node.pathCost)
+    frontier.push(node,node.pathCost)
     explored = set()
     while not frontier.isEmpty():
         node = frontier.pop()
@@ -208,9 +209,9 @@ def uniformCostSearch(problem):
         for successor in succesor_list:
             child = Node(successor, node)
             if ( (child.state not in explored) and child not in frontier.heap): 
-                #if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
+                frontier.push(child,child.pathCost)
+            elif (child.state in frontier.heap ):
                 frontier.update(child,child.pathCost)
-            #elif (child.state in frontier.list )
     return []
 
 
