@@ -68,6 +68,47 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+class Node:
+    """
+        State: Coordinate of Node
+        Parent: Node in Search Tree that generated this Node
+        Action: Action applied to parent to generate this node
+        Path-Cost: Cost from initial state to this node
+    """
+    def __init__(self, successor, parent=None):
+        #successor(geitonas) =   ((34, 15), 'South', 1)
+        #print("Node :: successor = "+str(successor))
+        self.state = successor[0] #thesh 
+        self.parent = parent #poios einai o pateras 
+        self.action = successor[1]#pws phge apo ton patera ekei 
+        #an o parent yparxei prosthetw to kostos
+        if parent == None or parent.pathCost == None:
+            self.pathCost = successor[2]
+        else:
+            self.pathCost = parent.pathCost + successor[2]
+    def expand(self,problem):
+        return [self.Node(successor, self)
+                for successor in problem.getSuccessors(self.state)]
+    def child_node(self, problem, action):
+        "[Figure 3.10]"
+        next = action[0]
+        return Node(next, self, action[1], self.path_cost+action[2])
+
+
+    def getPath(self):
+        path = list()
+        currentNode = self
+        while currentNode.action != None:
+            path.insert(0, currentNode.action)
+            currentNode = currentNode.parent
+        return path
+    def __eq__(self, other):
+        return isinstance(other, Node) and self.state == other.state
+
+    def __hash__(self):
+        return hash(self.state)
+
+
 
 
 def construct_path(state, meta):
@@ -119,132 +160,10 @@ def depthFirstSearch(problem):
             child = Node(successor, node)
             print("child.state = ",child.state)
            
-            if ( (child.state not in explored)):# and child not in frontier.list): 
+            if ( (child.state not in explored) and (child not in frontier.list) ): 
                 #if problem.isGoalState(child.state): return child.getPath()
                 frontier.push(child)
     return []
-
-class Node:
-    """
-        State: Coordinate of Node
-        Parent: Node in Search Tree that generated this Node
-        Action: Action applied to parent to generate this node
-        Path-Cost: Cost from initial state to this node
-    """
-    def __init__(self, successor, parent=None):
-        #successor(geitonas) =   ((34, 15), 'South', 1)
-        #print("Node :: successor = "+str(successor))
-        self.state = successor[0] #thesh 
-        self.parent = parent #poios einai o pateras 
-        self.action = successor[1]#pws phge apo ton patera ekei 
-        #an o parent yparxei prosthetw to kostos
-        if parent == None or parent.pathCost == None:
-            self.pathCost = successor[2]
-        else:
-            self.pathCost = parent.pathCost + successor[2]
-    def expand(self,problem):
-        return [self.Node(successor, self)
-                for successor in problem.getSuccessors(self.state)]
-    def child_node(self, problem, action):
-        "[Figure 3.10]"
-        next = action[0]
-        return Node(next, self, action[1], self.path_cost+action[2])
-
-
-    def getPath(self):
-        path = list()
-        currentNode = self
-        while currentNode.action != None:
-            path.insert(0, currentNode.action)
-            currentNode = currentNode.parent
-        return path
-    def __eq__(self, other):
-        return isinstance(other, Node) and self.state == other.state
-
-    def __hash__(self):
-        return hash(self.state)
-
-class Nodeilias:
-
-    """A node in a search tree. Contains a pointer to the parent (the node
-    that this is a successor of) and to the actual state for this node. Note
-    that if a state is arrived at by two paths, then there are two nodes with
-    the same state.  Also includes the action that got us to this state, and
-    the total path_cost (also known as g) to reach the node.  Other functions
-    may add an f and h value; see best_first_graph_search and astar_search for
-    an explanation of how the f and h values are handled. You will not need to
-    subclass this class."""
-
-    def __init__(self, state, parent=None, action=None, path_cost=0):
-        "Create a search tree Node, derived from a parent by an action."
-        self.state = state
-        self.parent = parent
-        self.action = action
-        self.path_cost = path_cost
-        self.depth = 0
-        if parent:
-            self.depth = parent.depth + 1
-
-    def __repr__(self):
-        return "<Nodei %s>" % (self.state,)
-
-    def __lt__(self, node):
-        return self.state < node.state
-
-    def expand(self, problem):
-        "List the nodes reachable in one step from this node."
-        return [self.child_node(problem, action)
-                for action in problem.getSuccessors(self.state)]
-
-    def child_node(self, problem, action):
-        "[Figure 3.10]"
-        next = action[0]
-        print("action0 = ",next)
-        return Nodei(next, self, action[1], self.path_cost+action[2])
-
-    def solution(self):
-        "Return the sequence of actions to go from the root to this node."
-        return [node.action for node in self.path()[1:]]
-
-    def path(self):
-        "Return a list of nodes forming the path from the root to this node."
-        node, path_back = self, []
-        while node:
-            path_back.append(node)
-            node = node.parent
-        return list(reversed(path_back))
-
-    # We want for a queue of nodes in breadth_first_search or
-    # astar_search to have no duplicated states, so we treat nodes
-    # with the same state as equal. [Problem: this may not be what you
-    # want in other contexts.]
-
-    #gia thn isothta twn Node
-    def __eq__(self, other):
-        return isinstance(other, Nodei) and self.state == other.state
-
-    def __hash__(self):
-        return hash(self.state)
-
-
-def breadthFirstSearchilias(problem):
-    print("liakou")
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    node = Nodei(problem.getStartState())
-    if problem.isGoalState(problem.getStartState()): return node.solution()
-    frontier = util.Queue()
-    frontier.push(node)
-    explored = set()
-    while not frontier .isEmpty():
-        node = frontier.pop()
-        if problem.isGoalState(node.state): return node.solution()
-        explored.add(node.state)
-        for child in node.expand(problem):
-            if (child.state not in explored) and (child not in frontier.list):
-                frontier.push(child)
-    return []
-
 
 
 def breadthFirstSearch(problem):
@@ -257,17 +176,16 @@ def breadthFirstSearch(problem):
     explored = set()
     while not frontier.isEmpty():
         node = frontier.pop()
-        if problem.isGoalState(node.state): return node.getPath()
-        #if(node.state  in explored): continue
+        #if we check the node here the autograder runs perfectly
+        #if problem.isGoalState(node.state): return node.getPath()
+       
         explored.add(node.state)
-        #print("frontier (queue )  == ",frontier.list)
         succesor_list =problem.getSuccessors(node.state)
 
         for successor in succesor_list:
             child = Node(successor, node)
-            print("child.state = ",child.state)
-            if ( (child.state not in explored) and child not in frontier.list): #and (flag ==0) ): #and (child not in frontier.list):
-                #if problem.isGoalState(child.state): return child.getPath()
+            if ( (child.state not in explored) and child not in frontier.list): 
+                if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
                 frontier.push(child)
     return []
 
@@ -275,7 +193,26 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    node = Node((problem.getStartState(), None, None))
+    if problem.isGoalState(problem.getStartState()): return node.getPath()
+    frontier = util.PriorityQueue()
+    frontier.update(node,node.pathCost)
+    explored = set()
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node.state): return node.getPath()
+       
+        explored.add(node.state)
+        succesor_list =problem.getSuccessors(node.state)
+
+        for successor in succesor_list:
+            child = Node(successor, node)
+            if ( (child.state not in explored) and child not in frontier.heap): 
+                #if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
+                frontier.update(child,child.pathCost)
+            #elif (child.state in frontier.list )
+    return []
+
 
 def nullHeuristic(state, problem=None):
     """
