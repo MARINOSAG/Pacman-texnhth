@@ -220,12 +220,33 @@ def nullHeuristic(state, problem=None):
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
+
+
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    node = Node((problem.getStartState(), None, None))
+    if problem.isGoalState(problem.getStartState()): return node.getPath()
+    frontier = util.PriorityQueue()
+    #frontier.update(node,node.pathCost)
+    if(node.pathCost ==None):    frontier.update(node, heuristic(node.state, problem))
+    else:  frontier.update(node, node.pathCost+heuristic(node.state, problem))
+    explored = set()
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node.state): return node.getPath()
+       
+        explored.add(node.state)
+        succesor_list =problem.getSuccessors(node.state)
+
+        for successor in succesor_list:
+            child = Node(successor, node)
+            if ( (child.state not in explored) and child not in frontier.heap): 
+                 if(child.pathCost ==None):    frontier.update(child, heuristic(child.state, problem))
+                 else:  frontier.update(child, child.pathCost+heuristic(child.state, problem))
+   
 
 
 # Abbreviations
