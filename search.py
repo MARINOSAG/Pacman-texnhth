@@ -243,7 +243,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
         for successor in succesor_list:
             child = Node(successor, node)
+
             if ( (child.state not in explored) and child not in frontier.heap): 
+                 #if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
                  if(child.pathCost ==None):    frontier.update(child, heuristic(child.state, problem))
                  else:  frontier.update(child, child.pathCost+heuristic(child.state, problem))
    
