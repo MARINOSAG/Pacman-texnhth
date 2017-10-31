@@ -78,6 +78,7 @@ class Node:
     def __init__(self, successor, parent=None):
         #successor(geitonas) =   ((34, 15), 'South', 1)
         #print("Node :: successor = "+str(successor))
+        #print("successor== ", successor)
         self.state = successor[0] #thesh 
         self.parent = parent #poios einai o pateras 
         self.action = successor[1]#pws phge apo ton patera ekei 

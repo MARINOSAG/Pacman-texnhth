@@ -289,19 +289,27 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
-    def getStartState(self):
+    def getStartState(self): #Genika sto problhma moy to state apoteleitai apo location kai corners(Boleans) pou dilwnei an exoume episkeftei to sygkekrimeno corner
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
         "*** YOUR CODE HERE ***"
+        return (self.startingPosition,False,False,False,False)
+
         util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
+        #"*** YOUR CODE HERE ***"
+        #corners = state[1]
+        #print "isgoal state"
+        #print(state)
+        location ,corner1,corner2 ,corner3,corner4 = state
+        return corner1 and corner2 and corner3 and corner4 #epistrefei True an exei episkeytei oles tis koryfes
+  
         util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -314,18 +322,31 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
+        location ,corner1,corner2 ,corner3,corner4 = state
+        top, right = self.walls.height-2, self.walls.width-2
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-
-            "*** YOUR CODE HERE ***"
-
+            #print(action)
+            #print(state[0])
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            #print("dx,dy=",(dx,dy))
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]#mas dinei True an xtypa toixo kai False an den xtypa
+            #print(hitsWall)
+            if(hitsWall == False):#an den prokeitai gia toixos
+                newlocation = (nextx,nexty)
+                newcorner1 = (True if newlocation == (1,1) else corner1) #vazoume True an prokeitai gia thn corner1
+                newcorner2 = (True if newlocation == (1,top) else corner2) #vazoume True an prokeitai gia thn corner1
+                newcorner3 = (True if newlocation == (right, 1) else corner3) #vazoume True an prokeitai gia thn corner1
+                newcorner4 = (True if newlocation == (right, top) else corner4) #vazoume True an prokeitai gia thn corner1
+                newstate = newlocation,newcorner1,newcorner2,newcorner3,newcorner4
+                #print("newstate == ")
+                #print(newstate)
+                successors.append((newstate, action, 1))
+        
+        
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
