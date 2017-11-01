@@ -327,14 +327,11 @@ class CornersProblem(search.SearchProblem):
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            #print(action)
-            #print(state[0])
+            
             x,y = state[0]
             dx, dy = Actions.directionToVector(action)
-            #print("dx,dy=",(dx,dy))
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]#mas dinei True an xtypa toixo kai False an den xtypa
-            #print(hitsWall)
             if(hitsWall == False):#an den prokeitai gia toixos
                 newlocation = (nextx,nexty)
                 newcorner1 = (True if newlocation == (1,1) else corner1) #vazoume True an prokeitai gia thn corner1
@@ -342,8 +339,7 @@ class CornersProblem(search.SearchProblem):
                 newcorner3 = (True if newlocation == (right, 1) else corner3) #vazoume True an prokeitai gia thn corner1
                 newcorner4 = (True if newlocation == (right, top) else corner4) #vazoume True an prokeitai gia thn corner1
                 newstate = newlocation,newcorner1,newcorner2,newcorner3,newcorner4
-                #print("newstate == ")
-                #print(newstate)
+               
                 successors.append((newstate, action, 1))
         
         
@@ -377,11 +373,53 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+    #euclideanHeuristic(position, problem, info={}):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    #        hitsWall = self.walls[nextx][nexty]#mas dinei True an xtypa toixo kai False an den xtypa
+    
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    location ,corner1,corner2 ,corner3,corner4 = state
+    x,y = location
+    top, right = walls.height-2, walls.width-2
+    #corner_list = [(1,1,corner1) , (right,1,corner2),(1,top,corner3),(right,top,corner4)]
+    #corner_list = [(1,1) , (1,top),(right,1),(right,top)]
+    corner_list =[]
+    if(corner1 ==False ): #an den exei paei akoma sthn koryfh 1
+        corner_list.append((1,1))
+    if(corner2 ==False ): #an den exei paei akoma sthn koryfh 1
+        corner_list.append((1,top))
+    if(corner3 ==False ): #an den exei paei akoma sthn koryfh 1
+        corner_list.append((right,1))
+    if(corner4 ==False ): #an den exei paei akoma sthn koryfh 1
+        corner_list.append((right,top))
+
+
+    hitsWall = walls[x][y]#mas dinei True an xtypa toixo kai False an den xtypa
+    
+
+    diff_list =[] #lista twn apostasewn tou state apo ta corners
+    
+    totalCost=0
+    while( len(corner_list)>0 ):#oso yparxoun koryfes pou prepei na episkeftei 
+        mincorner,mincost = mincost_nextcorner(location,corner_list) #vriskoume thn koryfh me to mincost
+       
+        totalCost += mincost 
+        corner_list.remove(mincorner)
+        location  = mincorner
+    return totalCost # Default to trivial solution
+
+def mincost_nextcorner(location,corners):#function that returns the corner with the minimum cost
+#ws kostos xrhsimopoume thn manhattanDistance
+    mincorner = corners[0]
+    mincost = util.manhattanDistance(location, mincorner)
+    for corner in corners :
+        cost = util.manhattanDistance(location, corner)
+        if(cost < mincost):
+            mincost =cost
+            mincorner = corner
+
+    return (mincorner,mincost)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

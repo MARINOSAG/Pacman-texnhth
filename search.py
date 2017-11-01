@@ -178,7 +178,7 @@ def breadthFirstSearch(problem):
     while not frontier.isEmpty():
         node = frontier.pop()
         #if we check the node here the autograder runs perfectly
-        #if problem.isGoalState(node.state): return node.getPath()
+        if problem.isGoalState(node.state): return node.getPath()
        
         explored.add(node.state)
         succesor_list =problem.getSuccessors(node.state)
@@ -186,7 +186,7 @@ def breadthFirstSearch(problem):
         for successor in succesor_list:
             child = Node(successor, node)
             if ( (child.state not in explored) and child not in frontier.list): 
-                if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
+                #if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
                 frontier.push(child)
     return []
 
