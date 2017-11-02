@@ -159,7 +159,7 @@ def depthFirstSearch(problem):
 
         for successor in succesor_list:
             child = Node(successor, node)
-            print("child.state = ",child.state)
+            #print("child.state = ",child.state)
            
             if ( (child.state not in explored) and (child not in frontier.list) ): 
                 #if problem.isGoalState(child.state): return child.getPath()

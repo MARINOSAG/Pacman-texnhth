@@ -261,7 +261,6 @@ def euclideanHeuristic(position, problem, info={}):
     xy1 = position
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
-
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
@@ -510,10 +509,77 @@ def foodHeuristic(state, problem):
     value, try: problem.heuristicInfo['wallCount'] = problem.walls.count()
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
-    """
+    # """
+    # position, foodGrid = state
+    # "*** YOUR CODE HERE ***"
+   
+    # position, foodGrid = state
+    # uneatenList = foodGrid.asList()
+    # score = 0
+
+    # for i in range(len(uneatenList)):
+    #     nearestDistance = 99999
+    #     #calculate distance to nearest food
+    #     for food in uneatenList:
+    #         dist = euclideanH(position, food)
+    #         #dist = util.manhattanDistance(position, food)
+    #         if dist < nearestDistance:
+    #             nearestDistance = dist #set distance to nearest food
+    #             nearestFood = food
+    #         uneatenList.remove(food)
+    #         #print(score, nearestDistance)
+    #         score += nearestDistance #add nearest distance to score
+    #         #print(score)
+    #         position = nearestFood #set position to nearest food
+    #   #print(score)
+    # return score
+
+
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    x, y = position
+    foodList = list(foodGrid.asList())
+    if (len(foodList)==0):
+        return 0
+    maxX = 0
+    maxY = 0
+    minX = 0
+    minY = 0
+    max_position = foodList[0]
+    min_position = foodList[0]
+    for item in foodList: #briskoume to poio kontino item kai to pio makrino kai efarmozoume manhatan distance
+        foodX, foodY = item
+        xDistance = foodX - x
+        yDistance = foodY - y
+        if xDistance > maxX:
+            maxX = xDistance
+        elif xDistance < minX:
+            minX = xDistance
+        if yDistance > maxY:
+            maxY = yDistance
+        elif yDistance < minY:
+            minY = yDistance
+    max_position = (maxX,maxY) 
+    min_position = (minX,minY)
+    return util.manhattanDistance(max_position,min_position)
+    #return maxX + maxY - minY -minX
+
+
+    return totalCost
+
+def euclideanH(position1,position2):
+    xy1 = position1
+    xy2 = position2
+    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
+def next_minfood(position,food_list):
+    minfood = food_list[0]
+    mincost = euclideanH(position, minfood)
+    for food in food_list:
+        cost = euclideanH(position, minfood)
+        if(cost<mincost):
+            mincost = cost
+            minfood = food
+    return (minfood,mincost)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
