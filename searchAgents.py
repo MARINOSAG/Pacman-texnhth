@@ -566,12 +566,12 @@ def foodHeuristic(state, problem):
 
     return totalCost
 
-def euclideanH(position1,position2):
+def euclideanH(position1,position2):#synarthsh pou ylopoiei thn euklideia apostash meta3y dyo thesewn
     xy1 = position1
     xy2 = position2
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
-def next_minfood(position,food_list):
+def next_minfood(position,food_list):#synarthsh poy epistrefei se tuple thn thesh toy faghtoy me to mikrotero kostos kai to costos ayto
     minfood = food_list[0]
     mincost = euclideanH(position, minfood)
     for food in food_list:
@@ -605,11 +605,15 @@ class ClosestDotSearchAgent(SearchAgent):
         """
         # Here are some useful elements of the startState
         startPosition = gameState.getPacmanPosition()
+        
         food = gameState.getFood()
         walls = gameState.getWalls()
-        problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
+        problem = AnyFoodSearchProblem(gameState)
+        path = search.aStarSearch(problem)#kaloume A* gia na mas ferei to path
+        #print(path)
+        return path#search.bfs(anyfood)
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -646,7 +650,15 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
+        count_True = 0  #kratame ton plithos twn True dhladh to posa food exoun meinei 
+        for food_list in self.food:
+            
+            count_True += food_list.count(True)
+        #to faghto einai goal an einai True kai to plithos twn True einai thetikos
+        return self.food[x][y] and count_True >0 #and count_True ==1 #epistrefei True an to state einai to teleytaio food gia na faei
         util.raiseNotDefined()
+
+#def min_mazeDistance(point1,gameState):
 
 def mazeDistance(point1, point2, gameState):
     """
