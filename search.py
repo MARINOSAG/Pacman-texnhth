@@ -140,72 +140,75 @@ def tinyMazeSearch(problem):
 ##
 # def depthFirstSearch(problem):
 	
-# 	node = Node((problem.getStartState(), None, None))
-# 	if problem.isGoalState(problem.getStartState()): return node.getPath()
-# 	frontier = util.Stack()
-# 	frontier.push(node)
-# 	explored = set()
-# 	while not frontier.isEmpty():
-# 		node = frontier.pop()
-# 		if problem.isGoalState(node.state): return node.getPath()
-# 		explored.add(node.state)
-# 		succesor_list =problem.getSuccessors(node.state)
+#   node = Node((problem.getStartState(), None, None))
+#   if problem.isGoalState(problem.getStartState()): return node.getPath()
+#   frontier = util.Stack()
+#   frontier.push(node)
+#   explored = set()
+#   while not frontier.isEmpty():
+#       node = frontier.pop()
+#       if problem.isGoalState(node.state): return node.getPath()
+#       explored.add(node.state)
+#       succesor_list =problem.getSuccessors(node.state)
 
-# 		for successor in succesor_list:
-# 			child = Node(successor, node)
-# 			if( child.state not in explored) :#and (child not in frontier.list) : 
-# 				#if problem.isGoalState(child.state): return child.getPath()
-# 				frontier.push(child)
-# 	return []
+#       for successor in succesor_list:
+#           child = Node(successor, node)
+#           if( child.state not in explored) :#and (child not in frontier.list) : 
+#               #if problem.isGoalState(child.state): return child.getPath()
+#               frontier.push(child)
+#   return []
 
 #aytos o tropos den trexei me autograder
 def depthFirstSearch(problem):
-    
-    node = Node((problem.getStartState(), None, None))
-    if problem.isGoalState(problem.getStartState()): return node.getPath()
-    frontier = util.Stack()
-    frontier.push(node)
-    explored = set()
-    while not frontier.isEmpty():
-        node = frontier.pop()
-        if problem.isGoalState(node.state): return node.getPath()
-        explored.add(node.state)
-        succesor_list =problem.getSuccessors(node.state)
+	
+	node = Node((problem.getStartState(), None, None))
+	if problem.isGoalState(problem.getStartState()): return node.getPath()
+	frontier = util.Stack()
+	frontier.push(node)
+	explored = set()
+	while not frontier.isEmpty():
+		node = frontier.pop()
+		#if problem.isGoalState(node.state): return node.getPath()
+		explored.add(node.state)
+		succesor_list =problem.getSuccessors(node.state)
 
-        for successor in succesor_list:
-            child = Node(successor, node)
-            #print("child.state = ",child.state)
-           
-            if ( (child.state not in explored) and (child not in frontier.list) ): 
-                #if problem.isGoalState(child.state): return child.getPath()
-                frontier.push(child)
+		for successor in succesor_list:
+			child = Node(successor, node)
+			#print("child.state = ",child.state)
+		   
+			if ( (child.state not in explored)):# and child not in frontier.list): 
+				if problem.isGoalState(child.state): return child.getPath()
+				frontier.push(child)
 	return []
 
 ##o parakatw tropos  ths breadthFirstSearch trexei swsta 3/3 me autograder
 ##
 ## ayth h 
 # def breadthFirstSearch(problem):
-# 	"""Search the shallowest nodes in the search tree first."""
-# 	"*** YOUR CODE HERE ***"
-# 	node = Node((problem.getStartState(), None, None))
-# 	if problem.isGoalState(problem.getStartState()): return node.getPath()
-# 	frontier = util.Queue()
-# 	frontier.push(node)
-# 	explored = set()
-# 	while not frontier.isEmpty():
-# 		node = frontier.pop()
-# 		#if we check the node here the autograder runs perfectly
-# 		if problem.isGoalState(node.state): return node.getPath()
+#   """Search the shallowest nodes in the search tree first."""
+#   "*** YOUR CODE HERE ***"
+#   node = Node((problem.getStartState(), None, None))
+#   if problem.isGoalState(problem.getStartState()): return node.getPath()
+#   frontier = util.Queue()
+#   frontier.push(node)
+#   explored = set()
+#   while not frontier.isEmpty():
+#       node = frontier.pop()
+#       #if we check the node here the autograder runs perfectly
+#       if problem.isGoalState(node.state): return node.getPath()
 	   
-# 		explored.add(node.state)
-# 		succesor_list =problem.getSuccessors(node.state)
+#       explored.add(node.state)
+#       succesor_list =problem.getSuccessors(node.state)
 
-# 		for successor in succesor_list:
-# 			child = Node(successor, node)
-# 			if ( (child.state not in explored) and child not in frontier.list): 
-# 				#if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
-# 				frontier.push(child)
-# 	return []
+#       for successor in succesor_list:
+#           child = Node(successor, node)
+#           if ( (child.state not in explored) and child not in frontier.list): 
+#               #if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
+#               frontier.push(child)
+#   return []
+
+
+
 
 def breadthFirstSearch(problem):
 	"""Search the shallowest nodes in the search tree first."""
@@ -217,16 +220,19 @@ def breadthFirstSearch(problem):
 	explored = set()
 	while not frontier.isEmpty():
 		node = frontier.pop()
+		#if problem.isGoalState(node.state): return node.getPath()
+		#if(node.state  in explored): continue
 		explored.add(node.state)
+		#print("frontier (queue )  == ",frontier.list)
 		succesor_list =problem.getSuccessors(node.state)
 
 		for successor in succesor_list:
 			child = Node(successor, node)
-			if ( (child.state not in explored) and child not in frontier.list): 
-				if problem.isGoalState(child.state): return child.getPath() #checkaroume edw an einai goalstate
+			#print("child.state = ",child.state)
+			if ( (child.state not in explored) and child not in frontier.list): #and (flag ==0) ): #and (child not in frontier.list):
+				if problem.isGoalState(child.state): return child.getPath()
 				frontier.push(child)
 	return []
-
 
 #autos o tropos den trexei me autograder
 def uniformCostSearch(problem):
@@ -267,7 +273,7 @@ def uniformCostSearch(problem):
 #     while not frontier.isEmpty():
 #         node = frontier.pop()
 #         if problem.isGoalState(node.state): return node.getPath()
-       
+	   
 #         explored.add(node.state)
 #         succesor_list =problem.getSuccessors(node.state)
 
