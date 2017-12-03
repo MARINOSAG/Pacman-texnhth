@@ -428,11 +428,23 @@ def betterEvaluationFunction(currentGameState):
 
 	min_food_distance =  float('Inf')#arxikopoiw me -apeiro to max
 	min_ghost_distance = float('Inf')
+	min_capsule_distance = float('Inf')
+	min_scared_ghost_distance = float('Inf')
 
 	pacmanPos = currentGameState.getPacmanPosition()
 	ghostStates = currentGameState.getGhostStates()	
 
+	Capsules = currentGameState.getCapsules()
 
+	if(len(Capsules) == 0):
+		#an den exoun meinei kapsoules 
+		min_capsule_distance = 0 
+	else:
+		#ypologizoume thn apostash apo to kontinotero capsule
+		for capsule in Capsules :
+			temp  = 1.0/manhattanDistance(pacmanPos, capsule)#edw pairnoume to reciprocal
+			if(temp< min_capsule_distance):
+				min_capsule_distance = temp;
 
 	#an ton trwei sthn me epomenh kinhsh thn action tote epestrepse -INf
 	for ghost_state in ghostStates:
@@ -447,22 +459,43 @@ def betterEvaluationFunction(currentGameState):
 			min_food_distance = temp
 
 	#vriskw thn pio kontinh apostash apo ta ghosts
-	for ghost in ghostStates:
-		temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
-		if(temp < min_ghost_distance):
-			min_ghost_distance = temp
+	#efoson yparxoun fantasmata non scared
+	if(len([x for x in ghostStates if(x.scaredTimer >0 )]) >0 ):
+		for ghost in ghostStates:
+			#leitourgoume mono gia ta not scared ghosts
+			#if(ghost.scaredTimer == 0):
+			temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
+			if(temp < min_ghost_distance):
+				min_ghost_distance = temp
+	else:
+		min_ghost_distance = 0 
 
 
 	#an exei faei capsule o pacman tote symfairei na faei kapoio kontino fantasma
-	if (ghostStates[0].scaredTimer != 0): 
-		#kanontas to min_ghost_distance arnhtiko einai sthn synexeia san na to prosthetoume sto value dhladh ay3anoume to value
-		min_ghost_distance = -1*min_ghost_distance
+	#efoson yparxoun fantasmata scared
+	if(len([x for x in ghostStates if(x.scaredTimer == 0)]) >0 ):
+
+		for ghost in ghostStates:
+			#leitourgoume mono gia ta not scared ghosts
+			#if(ghost.scaredTimer != 0)
+			temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
+			if(temp < min_scared_ghost_distance):
+				min_scared_ghost_distance = temp
+	else: 
+		min_scared_ghost_distance =0
+
+	#sthn periptwsh pou o arithmos twn fobhsmenwn fantasmatwn einai 0		
+	
+	# if (ghostStates[0].scaredTimer != 0): 
+	# 	#kanontas to min_ghost_distance arnhtiko einai sthn synexeia san na to prosthetoume sto value dhladh ay3anoume to value
+	# 	min_ghost_distance = -1*min_ghost_distance
 	
 
-	#to value bgainei apo to score prosthetwntas to min_food_distance kai afairwntas to min_ghost_distance
-	
-	value = scoreEvaluationFunction(currentGameState) + min_food_distance - min_ghost_distance
+	#to value bgainei apo to score prosthetwntas to min_food_distance kai afairwntas to min_ghost_distance psosthetontas to min_capsule_distance kai prosthetwntas to min_scared_ghost_distance
 
+	value = scoreEvaluationFunction(currentGameState) + min_food_distance - min_ghost_distance + min_capsule_distance +min_scared_ghost_distance
+	#value = scoreEvaluationFunction(currentGameState) + min_food_distance - min_ghost_distance 
+	#print(value)
 	return value
 
 # Abbreviation
