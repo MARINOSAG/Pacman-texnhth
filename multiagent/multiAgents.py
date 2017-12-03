@@ -113,9 +113,9 @@ class ReflexAgent(Agent):
 		mindistance =  float('Inf')#arxikopoiw me -apeiro to max
 
 		for food in currentGameState.getFood().asList() :
-		 	temp =  manhattanDistance(newPos, food)
-		 	if(temp < mindistance):
-		 		mindistance = temp
+			temp =  manhattanDistance(newPos, food)
+			if(temp < mindistance):
+				mindistance = temp
 
 		maxdistance = mindistance
 
@@ -423,8 +423,49 @@ def betterEvaluationFunction(currentGameState):
 	  DESCRIPTION: <write something here so we know what you did>
 	"""
 	"*** YOUR CODE HERE ***"
-	util.raiseNotDefined()
+
+
+
+	min_food_distance =  float('Inf')#arxikopoiw me -apeiro to max
+	min_ghost_distance = float('Inf')
+
+	pacmanPos = currentGameState.getPacmanPosition()
+	ghostStates = currentGameState.getGhostStates()	
+
+
+
+	#an ton trwei sthn me epomenh kinhsh thn action tote epestrepse -INf
+	for ghost_state in ghostStates:
+		if(ghost_state.getPosition() == tuple(pacmanPos) and (ghost_state.scaredTimer == 0)):
+			#print("EPISTREFEI -INF")
+			return float('-Inf')
+
+    #vriskw thn pio kontinh apostash apo ta foods
+	for food in currentGameState.getFood().asList() :
+		temp = 1.0/manhattanDistance(pacmanPos, food)#edw pairnoume to reciprocal
+		if(temp < min_food_distance):
+			min_food_distance = temp
+
+	#vriskw thn pio kontinh apostash apo ta ghosts
+	for ghost in ghostStates:
+		temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
+		if(temp < min_ghost_distance):
+			min_ghost_distance = temp
+
+
+	#an exei faei capsule o pacman tote symfairei na faei kapoio kontino fantasma
+	if (ghostStates[0].scaredTimer != 0): 
+		#kanontas to min_ghost_distance arnhtiko einai sthn synexeia san na to prosthetoume sto value dhladh ay3anoume to value
+		min_ghost_distance = -1*min_ghost_distance
+	
+
+	#to value bgainei apo to score prosthetwntas to min_food_distance kai afairwntas to min_ghost_distance
+	
+	value = scoreEvaluationFunction(currentGameState) + min_food_distance - min_ghost_distance
+
+	return value
 
 # Abbreviation
 better = betterEvaluationFunction
+
 
