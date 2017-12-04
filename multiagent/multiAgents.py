@@ -102,39 +102,98 @@ class ReflexAgent(Agent):
 
 
 		#messos = mesh_apostash_fantasmatwn(newPos,newGhostStates)#ypologismos mesou orou
+		
+		min_food_distance =  float('Inf')#arxikopoiw me -apeiro to max
 		min_ghost_distance = float('Inf')
-		#gia ta ghost me scaredtime 0
-		if(len([x for x in newGhostStates if(x.scaredTimer == 0 )]) >0 ):
-			for ghost in newGhostStatess:
-				#leitourgoume mono gia ta not scared ghosts
-				#if(ghost.scaredTimer == 0):
-				temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
-				if(temp < min_ghost_distance):
-					min_ghost_distance = temp
+		min_capsule_distance = float('Inf')
+		min_scared_ghost_distance = float('Inf')
+
+		pacmanPos = successorGameState.getPacmanPosition()
+		ghostStates = successorGameState.getGhostStates()	
+
+		Capsules = successorGameState.getCapsules()
+
+		if(len(Capsules) == 0):
+			#an den exoun meinei kapsoules 
+			min_capsule_distance = 0 
 		else:
-			min_ghost_distance = 0
-		# maxdistance =  float('-Inf')#arxikopoiw me -apeiro to max
+			#ypologizoume thn apostash apo to kontinotero capsule
+			for capsule in Capsules :
+				temp  = 1.0/manhattanDistance(pacmanPos, capsule)#edw pairnoume to reciprocal
+				if(temp< min_capsule_distance):
+					min_capsule_distance = temp;
 
-		# for food in currentGameState.getFood().asList() :
-		# 	temp = -1 * (manhattanDistance(newPos, food))
-		# 	if(temp > maxdistance):
-		# 		maxdistance = temp
+		#an ton trwei sthn me epomenh kinhsh thn action tote epestrepse -INf
+		for ghost_state in ghostStates:
+			if(ghost_state.getPosition() == tuple(pacmanPos) and (ghost_state.scaredTimer == 0)):
+				#print("EPISTREFEI -INF")
+				return float('-Inf')
 
-		mindistance =  float('Inf')#arxikopoiw me -apeiro to max
+		#vriskw thn pio kontinh apostash apo ta foods
+		for food in newFood.asList() :
+			temp = 1.0/manhattanDistance(pacmanPos, food)#edw pairnoume to reciprocal
+			if(temp < min_food_distance):
+				min_food_distance = temp
 
-		for food in successorGameState.getFood().asList() :
-			temp =  1.0/manhattanDistance(newPos, food)
-			if(temp < mindistance):
-				mindistance = temp
+		#vriskw thn pio kontinh apostash apo ta ghosts
+		if(len([x for x in newGhostStates if(x.scaredTimer >0 )]) >0 ):
+			for ghost in newGhostStates:
+				#leitourgoume mono gia ta not scared ghosts
+				if(ghost.scaredTimer > 0):
+					temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
+					if(temp < min_scared_ghost_distance):
+						min_scared_ghost_distance = temp
+		else:
+			min_scared_ghost_distance = 0 
 
-		maxdistance = mindistance
 
-		maxdistance = maxdistance 
+		#an exei faei capsule o pacman tote symfairei na faei kapoio kontino fantasma
+		#efoson yparxoun fantasmata non scared
+		if(len([x for x in newGhostStates if(x.scaredTimer == 0)]) >0 ):
+			for ghost in newGhostStates:
+				#leitourgoume mono gia ta not scared ghosts
+				if(ghost.scaredTimer == 0):
+					temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
+					if(temp < min_ghost_distance):
+						min_ghost_distance = temp
+		else: 
+			min_ghost_distance =0
+
+		return abs(scoreEvaluationFunction(successorGameState) - scoreEvaluationFunction(currentGameState)) + min_food_distance - min_ghost_distance + min_capsule_distance +min_scared_ghost_distance
+
+		#sthn periptwsh pou o arithmos twn fobhsmenwn fantasmatwn einai 0		
+
+		# if (ghostStates[0].scaredTimer != 0): 
+		# 	#kanontas to min_ghost_distance arnhtiko einai sthn synexeia san na to prosthetoume sto value dhladh ay3anoume to value
+		# 	min_ghost_distance = -1*min_ghost_distance
+
+
+		#to value bgainei apo to score prosthetwntas to min_food_distance kai afairwntas to min_ghost_distance psosthetontas to min_capsule_distance kai prosthetwntas to min_scared_ghost_distance
+
+		value = 0.2*scoreEvaluationFunction(successorGameState) + 0.4*min_food_distance - 0.1*min_ghost_distance + 0.2*min_capsule_distance +0.1*min_scared_ghost_distance
+		
+		#print(min_ghost_distance)
+
+		# if(min_scared_ghost_distance > 0 ):
+		# 	min_scared_ghost_distance = min_scared_ghost_distance *100
+
+		messos = mesh_apostash_fantasmatwn(pacmanPos,newGhostStates)
 		#messos = 1.0/messos
+		#if(min_capsule_distance >= 0.1): return 10 #min_capsule_distance = 10
+		
+		# value = 0.8*min_food_distance - 0.2*min_ghost_distance  + min_capsule_distance +min_scared_ghost_distance
+		# print(min_capsule_distance)
 
+		if(messos < 4 ): value =  scoreEvaluationFunction(successorGameState) +0.9*min_food_distance - 0.1*min_ghost_distance + min_capsule_distance + min_scared_ghost_distance
+		elif (messos<3): value =  scoreEvaluationFunction(successorGameState) +0.4*min_food_distance - 0.6*min_ghost_distance + min_capsule_distance + min_scared_ghost_distance
+		else: value =  min_food_distance + min_capsule_distance + min_scared_ghost_distance- min_ghost_distance
 
-		value = maxdistance + successorGameState.getScore() - min_ghost_distance 
-		return value
+		#value = scoreEvaluationFunction(successorGameState) +min_food_distance - min_ghost_distance + min_capsule_distance + min_scared_ghost_distance
+		value = min_food_distance - (0.6)*min_ghost_distance
+		print(value)
+		return (-1)*value 
+		#print(value)
+		#return value
 		#tried the reciprocal but didnt work
 		# if(maxdistance != 0): maxdistance = 1/maxdistance
 		# if(messos != 0): messos = 1/messos
@@ -142,9 +201,9 @@ class ReflexAgent(Agent):
 		#print(maxdistance +messos)
 
 		#an kata meso oro ta fantasmata einai konta kata <2 monades apostashs manhatan 
-		# if(messos <4): return  0.7*maxdistance  + 0.3*messos #ayto pou epistrefoume kathorizetai 70% apo maxdistance kai 30% apo messh apostash fantasmatwn
-		# if (messos<3): return 0.4* maxdistance +  0.6* messsos  #ayto pou epistrefoume kathorizetai 40% apo maxdistance kai 60% apo messh apostash fantasmatwn
-		# return  0.9*maxdistance +0.1 *messos #90% maxdistance kai 10% messos
+		# if(messos <4): value =   min_food_distance/0.7  + min_ghost_distance/0.3 #ayto pou epistrefoume kathorizetai 70% apo maxdistance kai 30% apo messh apostash fantasmatwn
+		# if (messos<3): return  min_food_distance/0.4 +  min_ghost_distance/0.6  #ayto pou epistrefoume kathorizetai 40% apo maxdistance kai 60% apo messh apostash fantasmatwn
+		# return   -1*min_food_distance/0.9 #+ min_ghost_distance/0.01 #90% maxdistance kai 10% messos
 
 
 #def find_closer_food_distance(currentGameState):
@@ -448,6 +507,13 @@ def betterEvaluationFunction(currentGameState):
 
 	Capsules = currentGameState.getCapsules()
 
+
+	#an ton trwei fantasma tote epestrepse -INf
+	for ghost_state in ghostStates:
+		if(ghost_state.getPosition() == tuple(pacmanPos) and (ghost_state.scaredTimer == 0)):
+			#print("EPISTREFEI -INF")
+			return float('-Inf')
+
 	if(len(Capsules) == 0):
 		#an den exoun meinei kapsoules 
 		min_capsule_distance = 0 
@@ -458,11 +524,7 @@ def betterEvaluationFunction(currentGameState):
 			if(temp< min_capsule_distance):
 				min_capsule_distance = temp;
 
-	#an ton trwei sthn me epomenh kinhsh thn action tote epestrepse -INf
-	for ghost_state in ghostStates:
-		if(ghost_state.getPosition() == tuple(pacmanPos) and (ghost_state.scaredTimer == 0)):
-			#print("EPISTREFEI -INF")
-			return float('-Inf')
+	
 
     #vriskw thn pio kontinh apostash apo ta foods
 	for food in currentGameState.getFood().asList() :
@@ -471,29 +533,29 @@ def betterEvaluationFunction(currentGameState):
 			min_food_distance = temp
 
 	#vriskw thn pio kontinh apostash apo ta ghosts
-	#efoson yparxoun fantasmata non scared
+	#efoson yparxoun fantasmata  scared
 	if(len([x for x in ghostStates if(x.scaredTimer >0 )]) >0 ):
 		for ghost in ghostStates:
 			#leitourgoume mono gia ta not scared ghosts
 			if(ghost.scaredTimer > 0):
 				temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
-				if(temp < min_ghost_distance):
-					min_ghost_distance = temp
+				if(temp < min_scared_ghost_distance):
+					min_scared_ghost_distance = temp
 	else:
-		min_ghost_distance = 0 
+		min_scared_ghost_distance = 0 
 
 
 	#an exei faei capsule o pacman tote symfairei na faei kapoio kontino fantasma
-	#efoson yparxoun fantasmata scared
+	#efoson yparxoun fantasmata non scared
 	if(len([x for x in ghostStates if(x.scaredTimer == 0)]) >0 ):
 		for ghost in ghostStates:
 			#leitourgoume mono gia ta not scared ghosts
 			if(ghost.scaredTimer == 0):
 				temp = 1.0/manhattanDistance(pacmanPos,ghost.getPosition())#pairnoume to reciprocal	
-				if(temp < min_scared_ghost_distance):
-					min_scared_ghost_distance = temp
+				if(temp < min_ghost_distance):
+					min_ghost_distance = temp
 	else: 
-		min_scared_ghost_distance =0
+		min_ghost_distance =0
 
 	#sthn periptwsh pou o arithmos twn fobhsmenwn fantasmatwn einai 0		
 	
@@ -503,6 +565,7 @@ def betterEvaluationFunction(currentGameState):
 	
 
 	#to value bgainei apo to score prosthetwntas to min_food_distance kai afairwntas to min_ghost_distance psosthetontas to min_capsule_distance kai prosthetwntas to min_scared_ghost_distance
+	#print(min_ghost_distance)
 
 	value = scoreEvaluationFunction(currentGameState) + min_food_distance - min_ghost_distance + min_capsule_distance +min_scared_ghost_distance
 	#value = scoreEvaluationFunction(currentGameState) + min_food_distance - min_ghost_distance 
